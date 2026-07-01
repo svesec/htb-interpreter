@@ -1,34 +1,38 @@
-# htb-interpreter
-Penetration testing assessment of the Hack The Box "Interpreter" machine using a structured six-phase security assessment methodology.
+# Hack The Box – Interpreter
 
-## Executive Summary
+Penetration testing assessment of the Hack The Box **Interpreter** machine using a structured six-phase security assessment methodology.
 
-This repository documents penetration testing assessment of the Hack The Box **Interpreter** machine following a structured six-phase security assessment methodology.
-
-The assessment demonstrates a complete attack path beginning with external reconnaissance of a Mirth Connect deployment, followed by application analysis, credential extraction, GPU-assisted password recovery, authenticated SSH access, local service enumeration, source code review, identification of an unsafe Python `eval()` implementation, and successful privilege escalation resulting in root-level code execution.
-
-The objective of this assessment is not only to demonstrate exploitation, but also to document the methodology, technical reasoning, evidence, risk evaluation, and remediation recommendations expected in a professional penetration testing engagement.
 ---
 
-## Scope
+# Overview
 
-### Target
+This report documents a security assessment of the Hack The Box machine **Interpreter**. The objective of the assessment was to identify and validate security weaknesses across the exposed services and application components, determine their potential impact, and demonstrate the resulting attack path.
 
-- **Platform:** Hack The Box
-- **Machine:** Interpreter
-- **Operating System:** Debian Linux
-- **Primary Technologies:** Jetty, Mirth Connect, Java, Python, PostgreSQL
+The assessment identified multiple weaknesses throughout the target environment, beginning with reconnaissance of an exposed Mirth Connect deployment. Subsequent analysis led to application-level compromise, extraction of credential material, GPU-assisted password recovery, authenticated SSH access, local service enumeration, source code analysis, identification of an unsafe Python `eval()` implementation, and successful privilege escalation resulting in root-level code execution.
 
-### Assessment Objective
+The complete attack chain progressed from external reconnaissance to full system compromise while following a structured six-phase penetration testing methodology.
 
-The objective of this assessment was to identify, validate, and document security weaknesses across the exposed attack surface while following a structured six-phase penetration testing methodology.
-
-Testing included reconnaissance, vulnerability discovery, controlled exploitation, privilege escalation, risk assessment, and remediation recommendations.
 ---
 
-## Methodology
+# Scope
 
-This assessment follows a structured six-phase penetration testing methodology developed to provide a repeatable and systematic approach for evaluating the security of web applications and supporting infrastructure.
+| Item | Details |
+|------|---------|
+| **Target** | Interpreter |
+| **Platform** | Hack The Box |
+| **Operating System** | Debian Linux |
+| **Assessment Type** | Black Box Security Assessment |
+| **Primary Technologies** | Jetty, Mirth Connect, Java, Python, PostgreSQL |
+| **Objective** | Identify and validate security weaknesses leading to full system compromise |
+| **Out of Scope** | Denial of Service (DoS), brute-force attacks, attacks against external infrastructure |
+
+---
+
+# Methodology
+
+The assessment followed a structured six-phase security assessment methodology designed to provide a repeatable and systematic approach for evaluating the security of web applications and supporting infrastructure.
+
+The testing process consisted of the following phases:
 
 1. Preparation and Scope Definition
 2. Reconnaissance and Information Gathering
@@ -37,70 +41,46 @@ This assessment follows a structured six-phase penetration testing methodology d
 5. Risk Assessment
 6. Security Recommendations
 
-Each phase builds upon the previous one to ensure that every finding is properly validated, documented, and supported with technical evidence.
+Each finding was validated through controlled testing and supported by technical evidence collected during the assessment.
+
 ---
 
-# Phase 1 – Preparation and Scope Definition
+# Reconnaissance
 
-## Objective
+Initial reconnaissance identified three publicly accessible services exposed by the target host.
 
-The objective of this assessment was to evaluate the security posture of the target system by following a structured six-phase penetration testing methodology.
+| Port | Service | Version |
+|------|---------|---------|
+| 22 | SSH | OpenSSH 9.2p1 |
+| 80 | HTTP | Jetty |
+| 443 | HTTPS | Jetty |
 
-The assessment focused on identifying vulnerabilities, validating their exploitability under controlled conditions, assessing the associated security risks, and providing practical remediation recommendations.
+The HTTP and HTTPS services hosted the **Mirth Connect Administrator** interface, immediately identifying the primary application under assessment.
 
-## Scope
+The presence of both HTTP and HTTPS interfaces suggested a Java-based enterprise application. Initial enumeration therefore focused on technology identification, deployment artifacts, and available application resources.
 
-The assessment included:
+### Nmap Scan
 
-- External reconnaissance
-- Web application enumeration
-- Technology identification
-- Source code analysis
-- Credential analysis
-- Controlled exploitation
-- Privilege escalation
-- Risk assessment
-- Security recommendations
+![01 - Initial Nmap Scan](evidence/screenshots/01_nmap_initial_scan.png)
 
-## Rules of Engagement
+**Evidence File**
 
-The assessment was conducted against the designated Hack The Box target within an isolated laboratory environment.
+`evidence/files/01_nmap_initial_scan.txt`
 
-Only actions required to validate identified vulnerabilities were performed. Exploitation was intentionally limited to the minimum level necessary to demonstrate security impact while avoiding unnecessary post-exploitation activity.
 ---
 
-# Phase 2 – Reconnaissance and Information Gathering
+# Attack Surface Analysis
 
-## Objective
+Further enumeration confirmed that the exposed application was **Mirth Connect**, exposing both the administrative interface and deployment artifacts commonly associated with the platform.
 
-The objective of this phase was to identify exposed services, technologies, application components, and potential entry points that could contribute to the overall attack surface.
+Inspection of the available resources identified the Java Web Start launcher (`webstart.jnlp`), providing valuable information regarding the application deployment model.
 
-## External Reconnaissance
+These findings significantly reduced the attack surface by positively identifying the underlying technology stack and enabling targeted security research during the following assessment phases.
 
-Initial network reconnaissance was performed to identify publicly accessible services exposed by the target host.
+### Mirth Connect Administrator
 
-The scan revealed three primary services:
+![02 - Mirth Connect Login](evidence/screenshots/02_mirth_connect_login_page.png)
 
-- TCP/22 – OpenSSH
-- TCP/80 – Jetty HTTP
-- TCP/443 – Jetty HTTPS
+**Evidence File**
 
-The HTTP and HTTPS services hosted the Mirth Connect Administrator interface, immediately identifying the primary application under assessment.
-
-**Evidence**
-
-- `evidence/screenshots/01_nmap_initial_scan.png`
-- `evidence/files/01_nmap_initial_scan.txt`
-  
-### Technology Identification
-
-Further enumeration confirmed that the target application was based on **Mirth Connect**, exposing both the administrative interface and deployment artifacts commonly associated with the platform.
-
-Additional inspection of the available resources identified the Java Web Start launcher (`webstart.jnlp`), providing valuable information regarding the application deployment model.
-
-The availability of these resources significantly improved technology fingerprinting and enabled targeted research during the following assessment phases.
-
-**Evidence**
-
-- `evidence/screenshots/02_mirth_connect_login_page.png`
-- `evidence/files/02_webstart_jnlp.txt`
+`evidence/files/02_webstart_jnlp.txt`

@@ -257,3 +257,45 @@ Following successful privilege escalation, access to the user flag was also veri
 ### User Flag
 
 ![17 - User Flag](evidence/screenshots/17_user_flag_read.png)
+---
+
+# Findings Summary
+
+The assessment identified multiple security weaknesses which, when combined, resulted in full system compromise.
+
+| ID | Finding | Severity | Status |
+|----|----------|----------|--------|
+| F-01 | CVE-2023-43208 Unauthenticated Remote Code Execution | Critical | Confirmed |
+| F-02 | Plaintext Database Credentials Stored in Application Configuration | High | Confirmed |
+| F-03 | Weak User Password Recoverable via Offline Cracking | High | Confirmed |
+| F-04 | Unsafe Python `eval()` Leading to Root Code Execution | Critical | Confirmed |
+
+The identified findings demonstrate how several individually exploitable weaknesses combined to form a complete attack chain, ultimately resulting in full administrative compromise of the target system.
+# Risk Assessment
+
+The overall security posture of the target system should be considered **Critical**.
+
+Although the initial compromise relied on a publicly known vulnerability, several additional weaknesses significantly increased the impact of the attack.
+
+The combination of vulnerable software, exposed application components, recoverable credentials, and unsafe Python code execution enabled an attacker to progress from unauthenticated access to complete operating system compromise.
+
+No significant barriers prevented lateral progression between the identified attack stages once the initial foothold had been established.
+# Security Recommendations
+
+The following remediation actions are recommended:
+
+1. Upgrade Mirth Connect to a non-vulnerable version.
+2. Remove vulnerable application components exposed to untrusted users.
+3. Rotate all compromised credentials.
+4. Enforce stronger password policies to resist offline password attacks.
+5. Remove unsafe use of Python `eval()` and replace it with secure parsing logic.
+6. Perform regular application dependency and vulnerability management.
+7. Review application configuration files for embedded credentials.
+8. Implement defense-in-depth controls to reduce the impact of future application compromise.
+# Conclusion
+
+This assessment demonstrated a complete attack path from external reconnaissance to full operating system compromise.
+
+The exploitation chain combined publicly known vulnerabilities, insecure credential management, weak password hygiene, and unsafe application design to achieve root-level code execution.
+
+The assessment highlights the importance of secure software maintenance, credential protection, secure coding practices, and layered defensive controls in reducing the likelihood and impact of similar attacks.

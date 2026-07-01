@@ -1,0 +1,2 @@
+10:31:16.664443 IP <target_IP> > <attacker_IP>: ICMP echo request, id 3880, seq 1, length 64
+10:31:16.664767 IP <attacker_IP> > <target_IP>: ICMP echo reply, id 3880, seq 1, length 64

@@ -1,4 +1,4 @@
-# Hack The Box – Interpreter
+# Interpreter - Security Assessment Report
 
 Penetration testing assessment of the Hack The Box **Interpreter** machine using a structured six-phase security assessment methodology.
 

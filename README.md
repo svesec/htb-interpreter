@@ -126,3 +126,51 @@ The shell confirmed that the vulnerability could be used to gain execution on th
 ![05 - Initial Shell](evidence/screenshots/05_initial_shell.png)
 
 The initial shell provided the foothold required for local enumeration, credential discovery, and further privilege escalation analysis.
+---
+
+# Local Enumeration
+
+Following initial access, local enumeration was performed to identify the execution context, available services, sensitive files, and potential privilege escalation vectors.
+
+The compromised shell was running with limited privileges under the Mirth Connect service account. Initial enumeration focused on understanding the environment before attempting privilege escalation.
+
+### User Context
+
+![06 - User Context](evidence/screenshots/06_user_context.png)
+
+The enumeration confirmed the current user context and provided the starting point for further privilege escalation analysis.
+
+---
+
+## Mirth Installation Analysis
+
+Enumeration of the application directories revealed the Mirth Connect installation structure and several configuration files containing sensitive information.
+
+### Mirth Installation Directory
+
+![07 - Mirth Installation Directory](evidence/screenshots/07_mirth_installation_directory.png)
+
+Reviewing the application configuration files exposed credentials used by the backend PostgreSQL database.
+
+### Database Credentials
+
+![08 - Database Credentials](evidence/screenshots/08_database_credentials.png)
+
+The recovered credentials enabled authenticated access to the database, allowing further enumeration of stored application data.
+## Database Enumeration
+
+Using the recovered configuration credentials, authenticated access to the PostgreSQL database was established.
+
+Database enumeration identified application tables containing user account information and password hashes.
+
+### Database Access
+
+![09 - Database Access](evidence/screenshots/09_database_access.png)
+
+Further inspection revealed the stored credential records for privileged application users.
+
+### Database User Credentials
+
+![10 - Database User Credentials](evidence/screenshots/10_database_user_credentials.png)
+
+The extracted password hashes were preserved for offline password recovery.

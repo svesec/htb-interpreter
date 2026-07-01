@@ -38,4 +38,33 @@ This assessment follows a structured six-phase penetration testing methodology d
 6. Security Recommendations
 
 Each phase builds upon the previous one to ensure that every finding is properly validated, documented, and supported with technical evidence.
+---
+
+# Phase 1 – Preparation and Scope Definition
+
+## Objective
+
+The objective of this assessment was to evaluate the security posture of the target system by following a structured six-phase penetration testing methodology.
+
+The assessment focused on identifying vulnerabilities, validating their exploitability under controlled conditions, assessing the associated security risks, and providing practical remediation recommendations.
+
+## Scope
+
+The assessment included:
+
+- External reconnaissance
+- Web application enumeration
+- Technology identification
+- Source code analysis
+- Credential analysis
+- Controlled exploitation
+- Privilege escalation
+- Risk assessment
+- Security recommendations
+
+## Rules of Engagement
+
+The assessment was conducted against the designated Hack The Box target within an isolated laboratory environment.
+
+Only actions required to validate identified vulnerabilities were performed. Exploitation was intentionally limited to the minimum level necessary to demonstrate security impact while avoiding unnecessary post-exploitation activity.
 

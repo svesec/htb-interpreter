@@ -97,3 +97,32 @@ The target was confirmed as **Mirth Connect 4.4.0**, which falls within the vuln
 ### CVE Research
 
 ![03 - CVE-2023-43208 NVD Reference](evidence/screenshots/03_cve_2023_43208_nvd.png)
+---
+
+# Controlled Exploitation
+
+After confirming that the target was running a vulnerable version of Mirth Connect, controlled exploitation was performed to validate the impact of **CVE-2023-43208**.
+
+The exploitation process was performed incrementally. Instead of immediately attempting to obtain an interactive shell, a simple ICMP-based validation was used first. This confirmed that arbitrary command execution was possible while keeping the initial test low-impact and easy to verify.
+
+### Remote Code Execution Validation
+
+![04 - RCE Ping Validation](evidence/screenshots/04_rce_ping_validation.png)
+
+**Evidence File**
+
+`evidence/files/03_rce_ping_validation.txt`
+
+---
+
+# Initial Access
+
+After validating remote command execution, the payload was extended to obtain an interactive shell on the target system.
+
+The shell confirmed that the vulnerability could be used to gain execution on the underlying operating system through the exposed Mirth Connect service.
+
+### Initial Shell
+
+![05 - Initial Shell](evidence/screenshots/05_initial_shell.png)
+
+The initial shell provided the foothold required for local enumeration, credential discovery, and further privilege escalation analysis.

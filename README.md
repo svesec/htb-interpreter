@@ -259,7 +259,7 @@ The assessment confirmed complete compromise of the operating system with unrest
 
 ### Root Flag
 
-![16 - Root Flag](evidence/screenshots/16_root_flag_read_via_eva.png)
+![16 - Root Flag](evidence/screenshots/16_root_flag_read_via_eval.png)
 
 Following successful privilege escalation, access to the user flag was also verified as part of the assessment.
 

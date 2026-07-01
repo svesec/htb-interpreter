@@ -10,7 +10,7 @@ This report documents a security assessment of the Hack The Box machine **Interp
 
 The assessment identified multiple weaknesses throughout the target environment, beginning with reconnaissance of an exposed Mirth Connect deployment. Subsequent analysis led to application-level compromise, extraction of credential material, GPU-assisted password recovery, authenticated SSH access, local service enumeration, source code analysis, identification of an unsafe Python `eval()` implementation, and successful privilege escalation resulting in root-level code execution.
 
-The complete attack chain progressed from external reconnaissance to full system compromise while following a structured six-phase penetration testing methodology.
+The complete attack chain progressed from external reconnaissance to full system compromise while following a structured six-phase security assessment methodology.
 
 ---
 
@@ -84,7 +84,6 @@ These findings significantly reduced the attack surface by positively identifyin
 **Evidence File**
 
 `evidence/files/02_webstart_jnlp.txt`
----
 
 ---
 
@@ -97,6 +96,7 @@ The target was confirmed as **Mirth Connect 4.4.0**, which falls within the vuln
 ### CVE Research
 
 ![03 - CVE-2023-43208 NVD Reference](evidence/screenshots/03_cve_2023_43208_nvd.png)
+
 ---
 
 # Controlled Exploitation
@@ -126,6 +126,7 @@ The shell confirmed that the vulnerability could be used to gain execution on th
 ![05 - Initial Shell](evidence/screenshots/05_initial_shell.png)
 
 The initial shell provided the foothold required for local enumeration, credential discovery, and further privilege escalation analysis.
+
 ---
 
 # Local Enumeration
@@ -157,6 +158,9 @@ Reviewing the application configuration files exposed credentials used by the ba
 ![08 - Database Credentials](evidence/screenshots/08_database_credentials.png)
 
 The recovered credentials enabled authenticated access to the database, allowing further enumeration of stored application data.
+
+---
+
 ## Database Enumeration
 
 Using the recovered configuration credentials, authenticated access to the PostgreSQL database was established.
@@ -174,6 +178,7 @@ Further inspection revealed the stored credential records for privileged applica
 ![10 - Database User Credentials](evidence/screenshots/10_database_user_credentials.png)
 
 The extracted password hashes were preserved for offline password recovery.
+
 ---
 
 # Credential Recovery
@@ -203,6 +208,7 @@ Obtaining authenticated access significantly improved the assessment by enabling
 ![12 - Successful SSH Login](evidence/screenshots/12_successful_ssh_login_sedric.png)
 
 Authenticated access also provided the opportunity to inspect locally running services, application source code, and privilege escalation vectors that were not directly accessible from the initial foothold.
+
 ---
 
 # Privilege Escalation
@@ -236,6 +242,9 @@ Successful evaluation confirmed that attacker-controlled expressions were execut
 ![14 - SSTI eval Confirmation](evidence/screenshots/14_ssti_eval_confirmation.png)
 
 The successful execution confirmed that arbitrary Python expressions could be evaluated, demonstrating a reliable path toward privilege escalation.
+
+---
+
 ## Root Code Execution
 
 After validating the vulnerable code path, a controlled payload was constructed to execute operating system commands through the vulnerable `eval()` implementation.
@@ -257,6 +266,7 @@ Following successful privilege escalation, access to the user flag was also veri
 ### User Flag
 
 ![17 - User Flag](evidence/screenshots/17_user_flag_read.png)
+
 ---
 
 # Findings Summary
@@ -270,7 +280,10 @@ The assessment identified multiple security weaknesses which, when combined, res
 | F-03 | Weak User Password Recoverable via Offline Cracking | High | Confirmed |
 | F-04 | Unsafe Python `eval()` Leading to Root Code Execution | Critical | Confirmed |
 
-The identified findings demonstrate how several individually exploitable weaknesses combined to form a complete attack chain, ultimately resulting in full administrative compromise of the target system.
+The identified findings should not be viewed as isolated security issues. When combined, they created a complete attack chain that enabled an unauthenticated attacker to progress from external reconnaissance to full operating system compromise with root privileges.
+
+---
+
 # Risk Assessment
 
 The overall security posture of the target system should be considered **Critical**.
@@ -280,18 +293,31 @@ Although the initial compromise relied on a publicly known vulnerability, severa
 The combination of vulnerable software, exposed application components, recoverable credentials, and unsafe Python code execution enabled an attacker to progress from unauthenticated access to complete operating system compromise.
 
 No significant barriers prevented lateral progression between the identified attack stages once the initial foothold had been established.
+
+From a business perspective, successful exploitation could result in complete loss of confidentiality, integrity, and availability of the affected system.
+
+---
+
 # Security Recommendations
 
-The following remediation actions are recommended:
+The following remediation actions are recommended.
+
+## Immediate Actions
 
 1. Upgrade Mirth Connect to a non-vulnerable version.
-2. Remove vulnerable application components exposed to untrusted users.
-3. Rotate all compromised credentials.
-4. Enforce stronger password policies to resist offline password attacks.
-5. Remove unsafe use of Python `eval()` and replace it with secure parsing logic.
-6. Perform regular application dependency and vulnerability management.
-7. Review application configuration files for embedded credentials.
-8. Implement defense-in-depth controls to reduce the impact of future application compromise.
+2. Rotate all compromised credentials.
+3. Remove embedded credentials from application configuration files.
+4. Replace the unsafe Python `eval()` implementation with secure parsing logic.
+
+## Long-Term Improvements
+
+1. Enforce stronger password policies to resist offline password attacks.
+2. Perform regular application dependency and vulnerability management.
+3. Review application source code for unsafe dynamic execution patterns.
+4. Implement defense-in-depth controls to reduce the impact of future application compromise.
+
+---
+
 # Conclusion
 
 This assessment demonstrated a complete attack path from external reconnaissance to full operating system compromise.
@@ -299,3 +325,5 @@ This assessment demonstrated a complete attack path from external reconnaissance
 The exploitation chain combined publicly known vulnerabilities, insecure credential management, weak password hygiene, and unsafe application design to achieve root-level code execution.
 
 The assessment highlights the importance of secure software maintenance, credential protection, secure coding practices, and layered defensive controls in reducing the likelihood and impact of similar attacks.
+
+This assessment demonstrates how multiple individually exploitable weaknesses can be chained together to achieve complete system compromise, emphasizing the importance of secure software development, credential management, and continuous vulnerability management.

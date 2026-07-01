@@ -174,3 +174,32 @@ Further inspection revealed the stored credential records for privileged applica
 ![10 - Database User Credentials](evidence/screenshots/10_database_user_credentials.png)
 
 The extracted password hashes were preserved for offline password recovery.
+---
+
+# Credential Recovery
+
+The password hashes recovered from the PostgreSQL database were analyzed to determine the underlying hashing algorithm.
+
+The stored credentials were identified as **PBKDF2-SHA256** hashes, allowing offline password recovery using Hashcat.
+
+Offline password cracking was selected instead of further interaction with the target system in order to minimize additional activity against the host while validating the strength of the stored credentials.
+
+### Password Recovery
+
+![11 - Hashcat Password Recovery](evidence/screenshots/11_hashcat_pbkdf2_password_recovered.png)
+
+The recovered plaintext password successfully authenticated against the target system via SSH, providing legitimate user-level access.
+
+---
+
+# Authenticated Access
+
+Using the recovered credentials, an SSH session was successfully established as user **sedric**.
+
+Obtaining authenticated access significantly improved the assessment by enabling direct local enumeration instead of relying solely on the initial remote code execution primitive.
+
+### Successful SSH Login
+
+![12 - Successful SSH Login](evidence/screenshots/12_successful_ssh_login_sedric.png)
+
+Authenticated access also provided the opportunity to inspect locally running services, application source code, and privilege escalation vectors that were not directly accessible from the initial foothold.

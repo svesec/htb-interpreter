@@ -203,3 +203,57 @@ Obtaining authenticated access significantly improved the assessment by enabling
 ![12 - Successful SSH Login](evidence/screenshots/12_successful_ssh_login_sedric.png)
 
 Authenticated access also provided the opportunity to inspect locally running services, application source code, and privilege escalation vectors that were not directly accessible from the initial foothold.
+---
+
+# Privilege Escalation
+
+## Source Code Review
+
+Following authenticated access, local enumeration focused on identifying custom applications, scheduled tasks, and services executed with elevated privileges.
+
+During this process, a custom Python application (`notif.py`) was identified within the Mirth Connect environment.
+
+Reviewing the application source code revealed an unsafe use of Python's `eval()` function for processing user-controlled input.
+
+### Vulnerable Source Code
+
+![13 - notif.py eval() Vulnerability](evidence/screenshots/13_notif_py_eval_vulnerability.png)
+
+The application attempted to sanitize input using a regular expression before passing it directly to `eval()`. Although input validation was present, the implementation remained fundamentally insecure because attacker-controlled data was still evaluated as Python code.
+
+This represented a classic case of insecure dynamic code execution.
+
+---
+
+## Vulnerability Validation
+
+Before attempting privilege escalation, the identified vulnerability was validated using a harmless arithmetic payload.
+
+Successful evaluation confirmed that attacker-controlled expressions were executed by the Python interpreter.
+
+### SSTI / eval() Confirmation
+
+![14 - SSTI eval Confirmation](evidence/screenshots/14_ssti_eval_confirmation.png)
+
+The successful execution confirmed that arbitrary Python expressions could be evaluated, demonstrating a reliable path toward privilege escalation.
+## Root Code Execution
+
+After validating the vulnerable code path, a controlled payload was constructed to execute operating system commands through the vulnerable `eval()` implementation.
+
+Because the vulnerable application was executed with root privileges, successful exploitation resulted in arbitrary command execution as the root user.
+
+### Root Code Execution
+
+![15 - Root Code Execution](evidence/screenshots/15_root_code_execution_via_notif_eval.png)
+
+The assessment confirmed complete compromise of the operating system with unrestricted administrative privileges.
+
+### Root Flag
+
+![16 - Root Flag](evidence/screenshots/16_root_flag_read_via_eva.png)
+
+Following successful privilege escalation, access to the user flag was also verified as part of the assessment.
+
+### User Flag
+
+![17 - User Flag](evidence/screenshots/17_user_flag_read.png)

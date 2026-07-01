@@ -67,4 +67,40 @@ The assessment included:
 The assessment was conducted against the designated Hack The Box target within an isolated laboratory environment.
 
 Only actions required to validate identified vulnerabilities were performed. Exploitation was intentionally limited to the minimum level necessary to demonstrate security impact while avoiding unnecessary post-exploitation activity.
+---
 
+# Phase 2 – Reconnaissance and Information Gathering
+
+## Objective
+
+The objective of this phase was to identify exposed services, technologies, application components, and potential entry points that could contribute to the overall attack surface.
+
+## External Reconnaissance
+
+Initial network reconnaissance was performed to identify publicly accessible services exposed by the target host.
+
+The scan revealed three primary services:
+
+- TCP/22 – OpenSSH
+- TCP/80 – Jetty HTTP
+- TCP/443 – Jetty HTTPS
+
+The HTTP and HTTPS services hosted the Mirth Connect Administrator interface, immediately identifying the primary application under assessment.
+
+**Evidence**
+
+- `evidence/screenshots/01_nmap_initial_scan.png`
+- `evidence/files/01_nmap_initial_scan.txt`
+  
+### Technology Identification
+
+Further enumeration confirmed that the target application was based on **Mirth Connect**, exposing both the administrative interface and deployment artifacts commonly associated with the platform.
+
+Additional inspection of the available resources identified the Java Web Start launcher (`webstart.jnlp`), providing valuable information regarding the application deployment model.
+
+The availability of these resources significantly improved technology fingerprinting and enabled targeted research during the following assessment phases.
+
+**Evidence**
+
+- `evidence/screenshots/02_mirth_connect_login_page.png`
+- `evidence/files/02_webstart_jnlp.txt`
